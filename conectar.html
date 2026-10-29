@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conectar TikTok</title>
+<link rel="stylesheet" href="estilo.css">
+<style>
+input{width:100%;box-sizing:border-box;padding:10px;font-size:16px;border-radius:6px;border:1px solid #5a4a8a;background:#241a40;color:var(--texto)}
+button{margin-top:12px;padding:12px 20px;font-size:16px;border:0;border-radius:6px;background:var(--acento);color:#000;font-weight:700;cursor:pointer}
+</style>
+</head>
+<body><main>
+<h1>Conectar el canal de TikTok</h1>
+<p>Pega la <strong>Clave del cliente</strong> (Client key) de la app y pulsa el botón. TikTok te pedirá entrar con la cuenta del canal y dar permiso.</p>
+<p class="nota">La clave del cliente no es secreta (TikTok la pone en la dirección). El <strong>Secreto</strong> del cliente no lo pegues nunca aquí.</p>
+<input id="clave" placeholder="Clave del cliente" autocomplete="off">
+<button id="boton">Conectar con TikTok</button>
+<p id="aviso" class="nota"></p>
+<script>
+  document.getElementById("boton").onclick = function () {
+    var clave = document.getElementById("clave").value.trim();
+    if (!clave) {
+      document.getElementById("aviso").textContent = "Primero pega la clave del cliente.";
+      return;
+    }
+    // Un valor al azar para comprobar a la vuelta que la respuesta viene de esta petición.
+    var estado = Math.random().toString(36).slice(2);
+    try { sessionStorage.setItem("estado_tiktok", estado); } catch (e) {}
+    var datos = new URLSearchParams({
+      client_key: clave,
+      scope: "user.info.basic,video.upload",
+      response_type: "code",
+      redirect_uri: "https://rlopeznogueras-bot.github.io/callback.html",
+      state: estado
+    });
+    window.location.href = "https://www.tiktok.com/v2/auth/authorize/?" + datos.toString();
+  };
+</script>
+</main></body>
+</html>

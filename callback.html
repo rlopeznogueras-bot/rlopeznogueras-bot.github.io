@@ -14,8 +14,12 @@
   // TikTok vuelve a esta página con ?code=... en la dirección. Lo mostramos para copiarlo.
   var datos = new URLSearchParams(window.location.search);
   var mensaje = document.getElementById("mensaje");
-  if (datos.get("code")) {
-    mensaje.innerHTML = "Permiso concedido. Copia este código y pégalo donde te indique Claude (caduca en unos minutos):<br><br><code></code>";
+  var esperado = null;
+  try { esperado = sessionStorage.getItem("estado_tiktok"); } catch (e) {}
+  if (datos.get("code") && esperado && datos.get("state") !== esperado) {
+    mensaje.textContent = "La respuesta no coincide con tu petición. Vuelve a empezar desde la página Conectar.";
+  } else if (datos.get("code")) {
+    mensaje.innerHTML = "Permiso concedido. Copia este código y pégalo en el workflow <strong>Conectar TikTok</strong> de GitHub. Caduca en unos minutos:<br><br><code></code>";
     mensaje.querySelector("code").textContent = datos.get("code");
   } else if (datos.get("error")) {
     mensaje.textContent = "TikTok ha devuelto un error: " + datos.get("error") + " " + (datos.get("error_description") || "");
